@@ -15,33 +15,45 @@ def main():
     while(True):
         if state == INIT:
             try:
-                 #Read from Sensor
-                 print "READING FROM SENSOR"
-                 state = CONNECT_WIFI
+                #################
+                #Read from Sensor
+                #Insert Sensor Reading Code Here
+                #################
+                print "READING FROM SENSOR"
+                state = CONNECT_WIFI
             except:
                 ERROR = True
         elif state == CONNECT_WIFI:
             try:
+                ################
                 #Connect to WIFI
-                connect = True # This variable is set wether its connected
+                #INSERT Wifi Connection Code Here
+                ################
+                connect = True #TEMP; This is for testing until Wifi code added
                 if connect == True:
                     print "CONNECTED TO WEB"
                     state = WRITING_WEB
                 else:
                     print "FAILED TO CONNECT TO WEB"
-                    state = WRITING_LOCAL
+                    state = WRITING_LOCAL 
             except:
                 ERROR = True
         elif state == WRITING_WEB:
             try:
-                #write to the web
+                ###############
+                #Write to the Web
+                #INSERT Web Writing Here
+                ###############
                 print "WRITING TO WEB"
                 state = WRITING_LOCAL #This is for debugging and later will switch to INIT
             except:
                 ERROR = True
         elif state == WRITING_LOCAL:
             try:
-                #write locally
+                ##############
+                #Write to Local Storage
+                #INSERT Local Storage Code Here
+                ##############
                 print "WRITING LOCALLY"
                 state = SLEEP
             except:
@@ -50,9 +62,13 @@ def main():
             time.sleep(8)
             state = INIT
         if ERROR:
+            ################
             #Write error locally
+            #INSERT Error Recording Code Here
+            ################
             print "ERROR OCCURED"
             ERROR = False
+        
     return 0
 
 main()
