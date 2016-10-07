@@ -1,10 +1,8 @@
 import time
 import dweepy
+import sys
+import datetime
 
-def senddata(dev_name, temp, hum):
-    '''dev_name is the device name paramater <string>
-    temp is the tempature value paramater <float>
-    hum is the humidity value paramter <float>'''
 def main():
     ##
     #### STATE DECLERATIONS ####
@@ -51,27 +49,34 @@ def main():
                 ERROR = True
         elif state == WRITING_WEB:
             try:
-                  # define each of the keys for sending the temperature and humidity data 
+                print "WRITING TO WEB"
+                ###############
+                #Write to Dweepy
+                # define each of the keys for sending the temperature and humidity data 
+                ###############
                 dev_name = "pine_mountain_sensor_1"
                 tempkey = dev_name + "_temp"
                 humkey = dev_name + "_hum"
                 dweepy.dweet_for(tempkey, {'temp': TEMP})
-                dweepy.dweet_for(humkey, {'hum': HUM})
-                print "WRITING TO WEB"
+                dweepy.dweet_for(humkey, {'hum': HUM}) 
                 state = WRITING_LOCAL #This is for debugging and later will switch to INIT
             except:
                 ERROR = True
         elif state == WRITING_LOCAL:
             try:
-                ##############
-                #Write to Local Storage
-                #INSERT Local Storage Code Here
-                ##############
                 print "WRITING LOCALLY"
+                ##############
+                #Write to Local Storage        
+                ##############
+                f = open('recording.txt', 'a')
+                f.write("####\nDate/Time: " + str(datetime.datetime.now()) + "\nTemperature: " + str(TEMP) +"\nHumidity: " + str(HUM) + "\n####\n\n" )
+                f.close()
                 state = SLEEP
             except:
+                print "Unexpected error:", sys.exc_info()[0]
                 ERROR =True
         elif state == SLEEP:
+            print "SLEEP"
             time.sleep(8)
             state = INIT
         if ERROR:
@@ -81,6 +86,7 @@ def main():
             ################
             print "ERROR OCCURED"
             ERROR = False
+            state = SLEEP
         
     return 0
 
