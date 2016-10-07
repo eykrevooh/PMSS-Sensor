@@ -54,6 +54,7 @@ def main():
                 ERROR = True
         elif state == WRITING_WEB:
             try:
+                senddata("pine_mountain_sensor_1", temp, hum)
                 ###############
                 #Write to the Web
                 #INSERT Web Writing Here
