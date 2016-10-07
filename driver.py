@@ -4,16 +4,7 @@ import dweepy
 def senddata(dev_name, temp, hum):
     '''dev_name is the device name paramater <string>
     temp is the tempature value paramater <float>
-    hum is the humidity value paramter <float>
-    '''
-    # define each of the keys for sending the temperature and humidity data 
-    tempkey = dev_name + "_temp"
-    humkey = dev_name + "_hum"
-    
-    #Send the data to dweet.io
-    dweepy.dweet_for(tempkey, {'temp': temp})
-    dweepy.dweet_for(humkey, {'hum': hum})
-
+    hum is the humidity value paramter <float>'''
 def main():
     ##
     #### STATE DECLERATIONS ####
@@ -24,14 +15,20 @@ def main():
     SLEEP = 4
     ERROR = False
     ##
+    #### Varialbes ####
+    ##
+    TEMP = 0
+    HUM  = 0
     #### BEGIN MAIN LOOP ####
     state = INIT
     while(True):
         if state == INIT:
             try:
                 #################
-                #Read from Sensor
+                #Read From Sensor
                 #Insert Sensor Reading Code Here
+                #Record Humidity Reading as HUM
+                #Record Temp Reading as TEMP
                 #################
                 print "READING FROM SENSOR"
                 state = CONNECT_WIFI
@@ -54,12 +51,12 @@ def main():
                 ERROR = True
         elif state == WRITING_WEB:
             try:
-                senddata("pine_mountain_sensor_1", temp, hum)
-                ###############
-                #Write to the Web
-                #INSERT Web Writing Here
-                #Call senddata function Here
-                ###############
+                  # define each of the keys for sending the temperature and humidity data 
+                dev_name = "pine_mountain_sensor_1"
+                tempkey = dev_name + "_temp"
+                humkey = dev_name + "_hum"
+                dweepy.dweet_for(tempkey, {'temp': TEMP})
+                dweepy.dweet_for(humkey, {'hum': HUM})
                 print "WRITING TO WEB"
                 state = WRITING_LOCAL #This is for debugging and later will switch to INIT
             except:
