@@ -1,6 +1,0 @@
-####
-Date/Time: 2016-10-07 16:04:01.688446
-Temperature: 0
-Humidity: 0
-####
-
