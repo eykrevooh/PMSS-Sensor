@@ -1,0 +1,16 @@
+[Unit]
+Description=Pine Mountain Temp/Humi Logging
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python /home/pi/pmss/driver.py
+Restart=always
+RestartSec=90
+StartLimitInterval=400
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
+
+
