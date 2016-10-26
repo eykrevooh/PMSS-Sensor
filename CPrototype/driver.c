@@ -13,76 +13,78 @@
 //Delcare all Constant variables
 #define NUM_READ 5
 
-int main(){
+// Keep track of the states, start with INIT
+int state = INIT;
+
+void setup(){
+  // Run one time setup.
+}
+
+void loop(){
   //Declare Dynamic Variables
   float TEMP_READINGS[NUM_READ];
   float HUM_READINGS[NUM_READ];
   int CONNECTED;
-  //BEGIN MAIN LOOP
-  int state = INIT;
-  while(1){
-    switch(state){
 
-        case INIT:
-          //////////
-          //READ FROM SENSOR AND WRITE TO TEMP_READING AND HUM_READINGS ARRAY
-          //////////
+  switch(state){
 
-          //////////
-          //FIND AVERAGE READING VALUE
-          //////////
-          printf("READ FROM SENSOR\n");
-          state = CONNECT_WIFI;
-          break;
+    case INIT:
+      //////////
+      //READ FROM SENSOR AND WRITE TO TEMP_READING AND HUM_READINGS ARRAY
+      //////////
 
-        case CONNECT_WIFI:
-          //////////
-          //CONNECT TO THE WIFI
-          //////////
-          CONNECTED = 0; //This is for testing
-          if(CONNECTED){
-            state = WRITING_WEB;
-          }
-          else{
-            state = WRITING_LOCAL;
-          }
-          printf("CONNECTING TO WIFI\n");
-          break;
+      //////////
+      //FIND AVERAGE READING VALUE
+      //////////
+      printf("READ FROM SENSOR\n");
+      state = CONNECT_WIFI;
+      break;
 
-        case WRITING_LOCAL:
-          ////////////
-          //WRITE THE VALUE LOCALLY
-          ////////////
-          printf("WRITING LOCALLY\n"); 
-          state = SLEEP;
-          break;
+    case CONNECT_WIFI:
+      //////////
+      //CONNECT TO THE WIFI
+      //////////
+      CONNECTED = 0; //This is for testing
+      if(CONNECTED){
+        state = WRITING_WEB;
+      }
+      else{
+        state = WRITING_LOCAL;
+      }
+      printf("CONNECTING TO WIFI\n");
+      break;
 
-         case WRITING_WEB:
-          /////////////
-          //WRITE THE VALUE TO THE WEB
-          /////////////
-          printf("WRITING TO WEB\n");
-          state = DISCONNECT_WIFI;
-          break;
+    case WRITING_LOCAL:
+      ////////////
+      //WRITE THE VALUE LOCALLY
+      ////////////
+      printf("WRITING LOCALLY\n"); 
+      state = SLEEP;
+      break;
 
-         case DISCONNECT_WIFI:
-          /////////////
-          //DISCONNECT FROM THE WIFI
-          /////////////
-          printf("DISCONNECTING FROM WIFI\n");
-          state = SLEEP;
-          break;
+     case WRITING_WEB:
+      /////////////
+      //WRITE THE VALUE TO THE WEB
+      /////////////
+      printf("WRITING TO WEB\n");
+      state = DISCONNECT_WIFI;
+      break;
 
-         case SLEEP:
-          //////////
-          //SLEEP
-          //////////
-          printf("SLEEP\n");
-          sleep(4);
-          state = INIT;
-          break;
-        }
-  }
+     case DISCONNECT_WIFI:
+      /////////////
+      //DISCONNECT FROM THE WIFI
+      /////////////
+      printf("DISCONNECTING FROM WIFI\n");
+      state = SLEEP;
+      break;
 
-  return 0;
+     case SLEEP:
+      //////////
+      //SLEEP
+      //////////
+      printf("SLEEP\n");
+      sleep(4);
+      state = INIT;
+      break;
+    }
 }
