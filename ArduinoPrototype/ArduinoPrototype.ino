@@ -1,6 +1,8 @@
+
 #include <stdlib.h>
 #include <stdio.h>
-#include "LowPower.h"
+#include <LowPower.h>
+#include <DHT.h>
 
 //Declaring All States
 #define INIT 0
@@ -14,9 +16,12 @@
 //Delcare all Constant variables
 #define NUM_READ 5
 #define NUM_SLEEP 8
-#define RATE 10
+#define RATE 2
 #define LED_PIN 4    // what digital pin is LED
+#define DHTPIN 2     // what digital pin is DHT
+#define DHTTYPE DHT11   // DHT 11
 
+DHT dht(DHTPIN, DHTTYPE);
 
 // Keep track of the states, start with INIT
 int state = INIT;
@@ -29,10 +34,46 @@ void blinkLED() {
   delay(1000);              // wait for a second
 }
 
+void readDHT() {
+  // Reading temperature or humidity takes about 250 milliseconds!
+  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  float h = dht.readHumidity();
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  // Read temperature as Fahrenheit (isFahrenheit = true)
+  float f = dht.readTemperature(true);
+
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t) || isnan(f)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+
+  // Compute heat index in Fahrenheit (the default)
+  float hif = dht.computeHeatIndex(f, h);
+  // Compute heat index in Celsius (isFahreheit = false)
+  float hic = dht.computeHeatIndex(t, h, false);
+
+  Serial.print("Humidity: ");
+  Serial.print(h);
+  Serial.print(" %\t");
+  Serial.print("Temperature: ");
+  Serial.print(t);
+  Serial.print(" *C ");
+  Serial.print(f);
+  Serial.print(" *F\t");
+  Serial.print("Heat index: ");
+  Serial.print(hic);
+  Serial.print(" *C ");
+  Serial.print(hif);
+  Serial.println(" *F");
+}
+
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
   Serial.begin(9600);
+  dht.begin();
 }
 
 void loop(){
@@ -59,7 +100,7 @@ void loop(){
       //FIND AVERAGE READING VALUE
       //////////
       Serial.println("READ FROM SENSOR");
-      blinkLED();
+      readDHT();
       state = CONNECT_WIFI;
       break;
     
@@ -118,7 +159,7 @@ void loop(){
       
       if (SLEEP_COUNTER < ((NUM_SLEEP * RATE)/ 8)) {
         Serial.println("Going to sleep");
-        delay(1000);
+        delay(100);
         LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
                 SPI_OFF, USART0_OFF, TWI_OFF);
         SLEEP_COUNTER = SLEEP_COUNTER + 1;
