@@ -14,11 +14,13 @@
 //Delcare all Constant variables
 #define NUM_READ 5
 #define NUM_SLEEP 8
-#define RATE 1
+#define RATE 10
 #define LED_PIN 4    // what digital pin is LED
+
 
 // Keep track of the states, start with INIT
 int state = INIT;
+int SLEEP_COUNTER = 0;
 
 void blinkLED() {
   digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -38,7 +40,6 @@ void loop(){
   float TEMP_READINGS[NUM_READ];
   float HUM_READINGS[NUM_READ];
   int CONNECTED;
-  int SLEEP_COUNTER = 0;
 
   switch(state){
 
@@ -109,10 +110,15 @@ void loop(){
       //SLEEP
       //////////
       Serial.println("SLEEPING");
-      Serial.print ("COUNTER is:");
-      Serial.println(SLEEP_COUNTER);
+      
+      Serial.print("COUNTER is:");
+      Serial.print(SLEEP_COUNTER);
+      Serial.println(" ");
+      
       
       if (SLEEP_COUNTER < ((NUM_SLEEP * RATE)/ 8)) {
+        Serial.println("Going to sleep");
+        delay(1000);
         LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
                 SPI_OFF, USART0_OFF, TWI_OFF);
         SLEEP_COUNTER = SLEEP_COUNTER + 1;
@@ -120,7 +126,6 @@ void loop(){
           state = READ;      
           SLEEP_COUNTER = 0;
         }
-                
       break;
     }
 }
