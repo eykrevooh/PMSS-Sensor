@@ -20,6 +20,7 @@
 #define LED_PIN 4    // what digital pin is LED
 #define DHTPIN 2     // what digital pin is DHT
 #define DHTTYPE DHT11   // DHT 11
+#define BATTERY_PIN 0
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -69,6 +70,16 @@ void readDHT() {
   Serial.println(" *F");
 }
 
+int readVoltage() {
+  analogReference(INTERNAL);
+  int val;
+  val = analogRead(BATTERY_PIN);
+  Serial.print("Battery voltage is: ");
+  Serial.println(val);
+  return val;
+  
+  }
+
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
@@ -101,6 +112,7 @@ void loop(){
       //////////
       Serial.println("READ FROM SENSOR");
       readDHT();
+      readVoltage();
       state = CONNECT_WIFI;
       break;
     
