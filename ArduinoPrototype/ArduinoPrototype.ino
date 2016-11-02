@@ -16,11 +16,12 @@
 //Delcare all Constant variables
 #define NUM_READ 5
 #define NUM_SLEEP 8
-#define RATE 2
+#define RATE 1
 #define LED_PIN 4    // what digital pin is LED
 #define DHTPIN 2     // what digital pin is DHT
 #define DHTTYPE DHT11   // DHT 11
 #define BATTERY_PIN 0
+#define WIFI_PIN 5
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -80,9 +81,17 @@ int readVoltage() {
   
   }
 
+void connectToWifi() {
+  // this is a simulation for wifi connection assuming it will require 7s
+  digitalWrite(WIFI_PIN, HIGH);
+  delay(7000);
+  digitalWrite(WIFI_PIN, LOW);
+  }
+
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
+  pinMode(WIFI_PIN, OUTPUT);
   Serial.begin(9600);
   dht.begin();
 }
@@ -121,7 +130,7 @@ void loop(){
       //CONNECT TO THE WIFI
       //////////
       CONNECTED = 0; //This is for testing
-      blinkLED();
+      connectToWifi();
       if(CONNECTED){
         state = WRITING_WEB;
       }
