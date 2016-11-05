@@ -1,73 +1,53 @@
-
+//All library and class inclusions
 #include <stdlib.h>
 #include <stdio.h>
 #include <LowPower.h>
+#include "sensor.h"
 #include <DHT.h>
 
-//Declaring All States
-#define INIT 0
-#define CONNECT_WIFI 1
-#define WRITING_LOCAL 2
-#define WRITING_WEB 3
-#define DISCONNECT_WIFI 4
-#define SLEEP 5
-#define READ 6
+//Declaring All STATEs
+#define READ 0                  //Sensor Reads From Sensor In This State
+#define CONNECT_WIFI 1          //Connects the Arduino to WIFI
+#define WRITING_LOCAL 2         //If fails to connect to WIFI, write locally
+#define WRITING_WEB 3           //If connects to WIFI, write values to web
+#define DISCONNECT_WIFI 4       //Disconnects from WIFI
+#define SLEEP 5                 //Arduino goes to deep sleep
 
 //Delcare all Constant variables
-#define NUM_READ 5
-#define NUM_SLEEP 8
-#define RATE 2
-#define LED_PIN 4    // what digital pin is LED
-#define DHTPIN 2     // what digital pin is DHT
-#define DHTTYPE DHT11   // DHT 11
-#define BATTERY_PIN 0
+  //Sensor ID Declaration
+#define SENSOR_ID "Prototype" 
+  //Sensor Pins
+#define DHT11PIN 2
+#define DHT22PIN 3
+  //Other
+#define NUM_READ 5              //
+#define NUM_SLEEP 8             //
+#define RATE 2                  //
+#define LED_PIN 4               // what digital pin is LED
+#define BATTERY_PIN 0           //
 
-DHT dht(DHTPIN, DHTTYPE);
-
-// Keep track of the states, start with INIT
-int state = INIT;
+//Initialize All Global Variables
+int STATE = READ;
 int SLEEP_COUNTER = 0;
 
+//Initialize All Global Class Objects
+Sensor dht11(2, DHT11);
+
+typedef struct Data{
+  char  sensor_id[4];
+  float dht11_temp;
+  float dht11_hum;
+  float dht22_temp;
+  float dht22_hum;
+  float voltage;
+} data;
+
 void blinkLED() {
+  dht11.read();
   digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);              // wait for a second
   digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
   delay(1000);              // wait for a second
-}
-
-void readDHT() {
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-  float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  float t = dht.readTemperature();
-  // Read temperature as Fahrenheit (isFahrenheit = true)
-  float f = dht.readTemperature(true);
-
-  // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t) || isnan(f)) {
-    Serial.println("Failed to read from DHT sensor!");
-    return;
-  }
-
-  // Compute heat index in Fahrenheit (the default)
-  float hif = dht.computeHeatIndex(f, h);
-  // Compute heat index in Celsius (isFahreheit = false)
-  float hic = dht.computeHeatIndex(t, h, false);
-
-  Serial.print("Humidity: ");
-  Serial.print(h);
-  Serial.print(" %\t");
-  Serial.print("Temperature: ");
-  Serial.print(t);
-  Serial.print(" *C ");
-  Serial.print(f);
-  Serial.print(" *F\t");
-  Serial.print("Heat index: ");
-  Serial.print(hic);
-  Serial.print(" *C ");
-  Serial.print(hif);
-  Serial.println(" *F");
 }
 
 int readVoltage() {
@@ -83,8 +63,8 @@ int readVoltage() {
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
-  Serial.begin(9600);
-  dht.begin();
+  Serial.begin(2400);
+  //dht.begin();
 }
 
 void loop(){
@@ -93,14 +73,7 @@ void loop(){
   float HUM_READINGS[NUM_READ];
   int CONNECTED;
 
-  switch(state){
-
-    case INIT:
-      //////////
-      //This is the first state
-      //////////
-      blinkLED();
-      state = READ;
+  switch(STATE){
 
     case READ:
       //////////
@@ -111,9 +84,9 @@ void loop(){
       //FIND AVERAGE READING VALUE
       //////////
       Serial.println("READ FROM SENSOR");
-      readDHT();
+      //readDHT();
       readVoltage();
-      state = CONNECT_WIFI;
+      STATE = CONNECT_WIFI;
       break;
     
     case CONNECT_WIFI:
@@ -123,10 +96,10 @@ void loop(){
       CONNECTED = 0; //This is for testing
       blinkLED();
       if(CONNECTED){
-        state = WRITING_WEB;
+        STATE = WRITING_WEB;
       }
       else{
-        state = WRITING_LOCAL;
+        STATE = WRITING_LOCAL;
       }
       Serial.println("CONNECTING TO WIFI");
       break;
@@ -137,7 +110,7 @@ void loop(){
       ////////////
       Serial.println("WRITING LOCALLY");
       blinkLED();
-      state = SLEEP;
+      STATE = SLEEP;
       break;
 
      case WRITING_WEB:
@@ -146,7 +119,7 @@ void loop(){
       /////////////
       Serial.println("WRITING TO WEB");
       blinkLED();
-      state = DISCONNECT_WIFI;
+      STATE = DISCONNECT_WIFI;
       break;
 
      case DISCONNECT_WIFI:
@@ -155,7 +128,7 @@ void loop(){
       /////////////
       Serial.println("DISCONNECTING FROM WIFI");
       blinkLED();
-      state = SLEEP;
+      STATE = SLEEP;
       break;
 
      case SLEEP:
@@ -168,7 +141,6 @@ void loop(){
       Serial.print(SLEEP_COUNTER);
       Serial.println(" ");
       
-      
       if (SLEEP_COUNTER < ((NUM_SLEEP * RATE)/ 8)) {
         Serial.println("Going to sleep");
         delay(100);
@@ -176,7 +148,7 @@ void loop(){
                 SPI_OFF, USART0_OFF, TWI_OFF);
         SLEEP_COUNTER = SLEEP_COUNTER + 1;
       } else {
-          state = READ;      
+          STATE = READ;      
           SLEEP_COUNTER = 0;
         }
       break;
