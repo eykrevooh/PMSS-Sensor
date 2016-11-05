@@ -44,6 +44,8 @@ typedef struct Data{
 
 void blinkLED() {
   dht11.read();
+  dht11.get_temp();
+  dht11.get_hum();
   digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);              // wait for a second
   digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW

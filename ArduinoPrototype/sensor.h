@@ -12,6 +12,6 @@ class Sensor
     Sensor(int pin, int dht_type);
     float get_temp();
     float get_hum();
-    float read();
+    int read();
   };
 #endif
