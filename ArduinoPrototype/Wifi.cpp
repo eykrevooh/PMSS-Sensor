@@ -1,9 +1,10 @@
 #include "Wifi.h"
 #include "Arduino.h"
    
-   Wifi::Wifi()
+   Wifi::Wifi(int rx, int tx)
 {
-    
+    set_rx_tx(rx, tx);
+    setup();
 }
   
     /* ----------- SETTER FUNCTIONS ------- */
