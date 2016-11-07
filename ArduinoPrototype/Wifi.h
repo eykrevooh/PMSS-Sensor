@@ -16,9 +16,9 @@ private:
     String SSID;
     String password;
     String server;
-    int wifi_rxpin; // Default  = 8;
-    int wifi_txpin; // Default = 9;
-    int wifi_baudrate; // Default = 2400;
+    int wifi_rxpin; 
+    int wifi_txpin; 
+    int wifi_baudrate;
     bool wifi_connected = false;
     SoftwareSerial *esp;
 
