@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 //All library and class inclusions
+=======
+>>>>>>> c25c0f8c384b986c2e6e17ded84f6eaec63c12f7
 #include <stdlib.h>
 #include <stdio.h>
 #include <LowPower.h>
@@ -14,6 +17,7 @@
 #define SLEEP 5                 //Arduino goes to deep sleep
 
 //Delcare all Constant variables
+<<<<<<< HEAD
   //Sensor ID Declaration
 #define SENSOR_ID "Prototype" 
   //Sensor Pins
@@ -28,6 +32,21 @@
 
 //Initialize All Global Variables
 int STATE = READ;
+=======
+#define NUM_READ 5
+#define NUM_SLEEP 8
+#define RATE 1
+#define LED_PIN 4    // what digital pin is LED
+#define DHTPIN 2     // what digital pin is DHT
+#define DHTTYPE DHT11   // DHT 11
+#define BATTERY_PIN 0
+#define WIFI_PIN 5
+
+DHT dht(DHTPIN, DHTTYPE);
+
+// Keep track of the states, start with INIT
+int state = INIT;
+>>>>>>> c25c0f8c384b986c2e6e17ded84f6eaec63c12f7
 int SLEEP_COUNTER = 0;
 
 //Initialize All Global Class Objects
@@ -62,11 +81,24 @@ int readVoltage() {
   
   }
 
+void connectToWifi() {
+  // this is a simulation for wifi connection assuming it will require 7s
+  digitalWrite(WIFI_PIN, HIGH);
+  delay(7000);
+  digitalWrite(WIFI_PIN, LOW);
+  }
+
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
+<<<<<<< HEAD
   Serial.begin(2400);
   //dht.begin();
+=======
+  pinMode(WIFI_PIN, OUTPUT);
+  Serial.begin(9600);
+  dht.begin();
+>>>>>>> c25c0f8c384b986c2e6e17ded84f6eaec63c12f7
 }
 
 void loop(){
@@ -96,7 +128,7 @@ void loop(){
       //CONNECT TO THE WIFI
       //////////
       CONNECTED = 0; //This is for testing
-      blinkLED();
+      connectToWifi();
       if(CONNECTED){
         STATE = WRITING_WEB;
       }

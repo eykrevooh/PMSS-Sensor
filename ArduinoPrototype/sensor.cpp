@@ -6,14 +6,12 @@ Sensor::Sensor(int pin, int dht_type){
   dht_ = DHT(pin, dht_type);
 }
 
-
 int Sensor::read(){
     // Reading temperature or humidity takes about 250 milliseconds!
     // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
     hum_ = dht_.readHumidity();
     // Read temperature as Celsius (the default)
     temp_ = dht_.readTemperature();
-
     // Check if any reads failed and exit early (to try again).
     if (isnan(hum_) || isnan(temp_)) {
       Serial.println("Failed to read from DHT sensor!");
