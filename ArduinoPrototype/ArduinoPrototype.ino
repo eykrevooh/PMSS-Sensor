@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 //All library and class inclusions
-=======
->>>>>>> c25c0f8c384b986c2e6e17ded84f6eaec63c12f7
 #include <stdlib.h>
 #include <stdio.h>
 #include <LowPower.h>
@@ -17,9 +14,8 @@
 #define SLEEP 5                 //Arduino goes to deep sleep
 
 //Delcare all Constant variables
-<<<<<<< HEAD
   //Sensor ID Declaration
-#define SENSOR_ID "Prototype" 
+#define SENSOR_ID "Prototype"
   //Sensor Pins
 #define DHT11PIN 2
 #define DHT22PIN 3
@@ -32,21 +28,6 @@
 
 //Initialize All Global Variables
 int STATE = READ;
-=======
-#define NUM_READ 5
-#define NUM_SLEEP 8
-#define RATE 1
-#define LED_PIN 4    // what digital pin is LED
-#define DHTPIN 2     // what digital pin is DHT
-#define DHTTYPE DHT11   // DHT 11
-#define BATTERY_PIN 0
-#define WIFI_PIN 5
-
-DHT dht(DHTPIN, DHTTYPE);
-
-// Keep track of the states, start with INIT
-int state = INIT;
->>>>>>> c25c0f8c384b986c2e6e17ded84f6eaec63c12f7
 int SLEEP_COUNTER = 0;
 
 //Initialize All Global Class Objects
@@ -78,7 +59,6 @@ int readVoltage() {
   Serial.print("Battery voltage is: ");
   Serial.println(val);
   return val;
-  
   }
 
 void connectToWifi() {
@@ -91,15 +71,9 @@ void connectToWifi() {
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
-<<<<<<< HEAD
   Serial.begin(2400);
   //dht.begin();
-=======
-  pinMode(WIFI_PIN, OUTPUT);
-  Serial.begin(9600);
-  dht.begin();
->>>>>>> c25c0f8c384b986c2e6e17ded84f6eaec63c12f7
-}
+
 
 void loop(){
   //Declare Dynamic Variables
@@ -122,7 +96,7 @@ void loop(){
       readVoltage();
       STATE = CONNECT_WIFI;
       break;
-    
+
     case CONNECT_WIFI:
       //////////
       //CONNECT TO THE WIFI
@@ -170,19 +144,19 @@ void loop(){
       //SLEEP
       //////////
       Serial.println("SLEEPING");
-      
+
       Serial.print("COUNTER is:");
       Serial.print(SLEEP_COUNTER);
       Serial.println(" ");
-      
+
       if (SLEEP_COUNTER < ((NUM_SLEEP * RATE)/ 8)) {
         Serial.println("Going to sleep");
         delay(100);
-        LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
+        LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF,
                 SPI_OFF, USART0_OFF, TWI_OFF);
         SLEEP_COUNTER = SLEEP_COUNTER + 1;
       } else {
-          STATE = READ;      
+          STATE = READ;
           SLEEP_COUNTER = 0;
         }
       break;
