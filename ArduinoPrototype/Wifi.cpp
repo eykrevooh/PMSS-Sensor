@@ -1,9 +1,10 @@
 #include "Wifi.h"
 #include "Arduino.h"
    
-   Wifi::Wifi(int rx, int tx)
+   Wifi::Wifi(int rx, int tx, int baudrate)
 {
     set_rx_tx(rx, tx);
+    set_baudrate(baudrate);
     setup();
 }
   
