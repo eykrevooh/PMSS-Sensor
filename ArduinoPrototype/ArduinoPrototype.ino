@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <LowPower.h>
 #include "sensor.h"
+#include "Wifi.h"
 #include <DHT.h>
 
 //Declaring All STATEs
@@ -15,7 +16,7 @@
 
 //Delcare all Constant variables
   //Sensor ID Declaration
-#define SENSOR_ID "Prototype"
+#define SENSOR_ID "Prot"
   //Sensor Pins
 #define DHT11PIN 2
 #define DHT22PIN 3
@@ -34,7 +35,7 @@ int SLEEP_COUNTER = 0;
 Sensor dht11(2, DHT11);
 
 typedef struct Data{
-  char  sensor_id[4];
+  String sensor_id;
   float dht11_temp;
   float dht11_hum;
   float dht22_temp;
@@ -42,10 +43,10 @@ typedef struct Data{
   float voltage;
 } data;
 
+//Initialize Data Object
+data data_values;
+  
 void blinkLED() {
-  dht11.read();
-  dht11.get_temp();
-  dht11.get_hum();
   digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);              // wait for a second
   digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
@@ -61,20 +62,13 @@ int readVoltage() {
   return val;
   }
 
-void connectToWifi() {
-  // this is a simulation for wifi connection assuming it will require 7s
-  digitalWrite(WIFI_PIN, HIGH);
-  delay(7000);
-  digitalWrite(WIFI_PIN, LOW);
-  }
-
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
   Serial.begin(2400);
+  data_values.sensor_id = SENSOR_ID;
   //dht.begin();
-
-
+}
 void loop(){
   //Declare Dynamic Variables
   float TEMP_READINGS[NUM_READ];
@@ -87,7 +81,9 @@ void loop(){
       //////////
       //READ FROM SENSOR AND WRITE TO TEMP_READING AND HUM_READINGS ARRAY
       //////////
-
+      dht11.read();
+      data_values.dht11_temp = dht11.get_temp();
+      data_values.dht11_hum = dht11.get_hum();
       //////////
       //FIND AVERAGE READING VALUE
       //////////
