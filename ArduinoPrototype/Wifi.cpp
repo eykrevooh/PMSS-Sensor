@@ -1,10 +1,12 @@
 #include "Wifi.h"
 #include "Arduino.h"
    
-   Wifi::Wifi(int rx, int tx, int baudrate)
+   Wifi::Wifi(int rx, int tx, int baudrate, String servername, String ssid, String password)
 {
     set_rx_tx(rx, tx);
     set_baudrate(baudrate);
+    set_server(servername);
+    set_credentials(ssid, password);
     setup();
 }
   
