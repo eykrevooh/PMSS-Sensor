@@ -1,4 +1,4 @@
-# Wi-fi API
+# Wi-fi API Documentation
 
 **Wifi(int rx, int tx, int baudrate, String servername, String ssid, String password)**
 
