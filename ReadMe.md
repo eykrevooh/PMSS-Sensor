@@ -1,6 +1,6 @@
-# Wi-fi API
+# Wi-fi API Documentation
 
-**Wifi()**
+**Wifi(int rx, int tx, int baudrate, String servername, String ssid, String password)**
 
  This creates a wi-fi object that will allow us to connect to the esp8266.
 
