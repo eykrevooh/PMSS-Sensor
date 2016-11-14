@@ -4,6 +4,7 @@
 #include <LowPower.h>
 #include "sensor.h"
 #include "Wifi.h"
+#include "Data.h"
 #include <DHT.h>
 
 //Declaring All STATEs
@@ -20,7 +21,15 @@
   //Sensor Pins
 #define DHT11PIN 2
 #define DHT22PIN 3
+  //WIFI Globals
+#define TX 8
+#define RX 9
+#define SSID"WifiGroup"
+#define PWRD ""
+#define SERVERNAME "192.168.0.100"
+
   //Other
+#define BAUDRATE 2400
 #define NUM_READ 5              //
 #define NUM_SLEEP 8             //
 #define RATE 2                  //
@@ -30,22 +39,18 @@
 //Initialize All Global Variables
 int STATE = READ;
 int SLEEP_COUNTER = 0;
+bool CONNECTED;
+bool SENT;
 
 //Initialize All Global Class Objects
 Sensor dht11(2, DHT11);
 
-typedef struct Data{
-  String sensor_id;
-  float dht11_temp;
-  float dht11_hum;
-  float dht22_temp;
-  float dht22_hum;
-  float voltage;
-} data;
-
 //Initialize Data Object
 data data_values;
-  
+
+//Initialize WIFI Object
+Wifi wifi(RX, TX, BAUDRATE, SERVERNAME, SSID, PWRD);
+
 void blinkLED() {
   digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);              // wait for a second
@@ -65,16 +70,17 @@ int readVoltage() {
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
-  Serial.begin(2400);
+  Serial.begin(BAUDRATE);
   data_values.sensor_id = SENSOR_ID;
+  CONNECTED = wifi.connect();
   //dht.begin();
 }
+
 void loop(){
   //Declare Dynamic Variables
   float TEMP_READINGS[NUM_READ];
   float HUM_READINGS[NUM_READ];
-  int CONNECTED;
-
+  bool SENT;
   switch(STATE){
 
     case READ:
@@ -97,13 +103,13 @@ void loop(){
       //////////
       //CONNECT TO THE WIFI
       //////////
-      CONNECTED = 0; //This is for testing
-      connectToWifi();
       if(CONNECTED){
         STATE = WRITING_WEB;
       }
       else{
-        STATE = WRITING_LOCAL;
+        wifi.reset();
+        wifi.connect();
+        STATE = WRITING_WEB;
       }
       Serial.println("CONNECTING TO WIFI");
       break;
@@ -122,7 +128,10 @@ void loop(){
       //WRITE THE VALUE TO THE WEB
       /////////////
       Serial.println("WRITING TO WEB");
-      blinkLED();
+      SENT = wifi.send_data(data_values);
+      if(!SENT){
+        CONNECTED = 0;
+      }
       STATE = DISCONNECT_WIFI;
       break;
 

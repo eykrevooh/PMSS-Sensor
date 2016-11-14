@@ -1,4 +1,8 @@
+#ifndef wifi_h
+#define wifi_h
+
 #include "SoftwareSerial.h"
+#include "Data.h"
 
 class Wifi {
 
@@ -14,7 +18,7 @@ private:
 
 public:
 
-    Wifi(); //Constructor method
+    Wifi(int rx, int tx, int baudrate, String servername, String ssid, String password); //Constructor method
     
     void set_baudrate(int baudrate);
     /* ----------- SETTER FUNCTIONS ------- */
@@ -32,7 +36,8 @@ public:
     
     bool connect();
 
-    void send_data (data d);
+    bool send_data (data d);
     
 };
 
+#endif
