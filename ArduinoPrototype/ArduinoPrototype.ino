@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <LowPower.h>
+#include "Power.h"
 #include <DHT.h>
+
 
 //Declaring All States
 #define INIT 0
@@ -22,18 +23,14 @@
 #define BATTERY_PIN 0
 #define WIFI_PIN 5
 
+
+Power power(BATTERY_PIN);
+
 DHT dht(DHTPIN, DHTTYPE);
 
 // Keep track of the states, start with INIT
 int state = INIT;
 int SLEEP_COUNTER = 0;
-
-void blinkLED() {
-  digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);              // wait for a second
-  digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);              // wait for a second
-}
 
 void readDHT() {
   // Reading temperature or humidity takes about 250 milliseconds!
@@ -70,29 +67,12 @@ void readDHT() {
   Serial.println(" *F");
 }
 
-int readVoltage() {
-  analogReference(INTERNAL);
-  int val;
-  val = analogRead(BATTERY_PIN);
-  Serial.print("Battery voltage is: ");
-  Serial.println(val);
-  return val;
-  
-  }
-
-void connectToWifi() {
-  // this is a simulation for wifi connection assuming it will require 7s
-  digitalWrite(WIFI_PIN, HIGH);
-  delay(7000);
-  digitalWrite(WIFI_PIN, LOW);
-  }
-
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
   pinMode(WIFI_PIN, OUTPUT);
   Serial.begin(9600);
-  dht.begin();
+  
 }
 
 void loop(){
@@ -107,20 +87,15 @@ void loop(){
       //////////
       //This is the first state
       //////////
-      blinkLED();
+      
       state = READ;
 
     case READ:
       //////////
       //READ FROM SENSOR AND WRITE TO TEMP_READING AND HUM_READINGS ARRAY
       //////////
-
-      //////////
-      //FIND AVERAGE READING VALUE
-      //////////
       Serial.println("READ FROM SENSOR");
       readDHT();
-      readVoltage();
       state = CONNECT_WIFI;
       break;
     
@@ -129,7 +104,6 @@ void loop(){
       //CONNECT TO THE WIFI
       //////////
       CONNECTED = 0; //This is for testing
-      connectToWifi();
       if(CONNECTED){
         state = WRITING_WEB;
       }
@@ -144,7 +118,6 @@ void loop(){
       //WRITE THE VALUE LOCALLY
       ////////////
       Serial.println("WRITING LOCALLY");
-      blinkLED();
       state = SLEEP;
       break;
 
@@ -153,7 +126,6 @@ void loop(){
       //WRITE THE VALUE TO THE WEB
       /////////////
       Serial.println("WRITING TO WEB");
-      blinkLED();
       state = DISCONNECT_WIFI;
       break;
 
@@ -162,7 +134,6 @@ void loop(){
       //DISCONNECT FROM THE WIFI
       /////////////
       Serial.println("DISCONNECTING FROM WIFI");
-      blinkLED();
       state = SLEEP;
       break;
 
@@ -170,23 +141,9 @@ void loop(){
       //////////
       //SLEEP
       //////////
+      power.readVoltage();
       Serial.println("SLEEPING");
-      
-      Serial.print("COUNTER is:");
-      Serial.print(SLEEP_COUNTER);
-      Serial.println(" ");
-      
-      
-      if (SLEEP_COUNTER < ((NUM_SLEEP * RATE)/ 8)) {
-        Serial.println("Going to sleep");
-        delay(100);
-        LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
-                SPI_OFF, USART0_OFF, TWI_OFF);
-        SLEEP_COUNTER = SLEEP_COUNTER + 1;
-      } else {
-          state = READ;      
-          SLEEP_COUNTER = 0;
-        }
+      power.sleep(0.005);
       break;
     }
 }
