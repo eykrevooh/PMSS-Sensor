@@ -1,14 +1,4 @@
 #include "SoftwareSerial.h"
-
-typedef struct Data{
-
-  char sensor_id;
-  float dht11_temp;
-  float dht11_hum;
-  float dht22_temp;
-  float dht22_hum;
-  float voltage;
-  }data;
   
 class Wifi {
 
@@ -24,10 +14,9 @@ private:
 
 public:
 
-    Wifi(); //Constructor method
+    Wifi(int rx, int tx, int baudrate, String servername, String ssid, String password);
     
     void set_baudrate(int baudrate);
-    /* ----------- SETTER FUNCTIONS ------- */
     
     void set_rx_tx(int rx, int tx);
     
@@ -36,7 +25,6 @@ public:
     void set_credentials(String ssid, String password);
 
     void setup();
-    /* ------------------------------------*/
     
     void reset();
     
