@@ -69,7 +69,7 @@
     return false;
     }
 
-    void Wifi::send_data (data d) {
+    boolean Wifi::send_data (data d) {
   
      /* Sends data to the web server using the struct parameter 'data'
     Params: data is a struct which includes <key>, <tag>, <value> members
@@ -110,21 +110,21 @@
       esp->println(postRequest.length() );
       delay(500);
     
-      if(esp->find(">")) { Serial.println("Sending.."); esp->print(postRequest);
+      if(esp->find(">")) { 
+        Serial.println("Sending.."); 
+        esp->print(postRequest);
     
-      if( esp->find("SEND OK")) { Serial.println("Packet sent");
-    
-      // while (esp->available()) {
-    
-      // String tmpResp = esp->readString();
-      // Serial.println(tmpResp);
-    
-      // }
-    
-      // close the connection
-      esp->println("AT+CIPCLOSE");
-    
-    }}
+        if( esp->find("SEND OK")) { 
+          Serial.println("Packet sent");    
+          esp->println("AT+CIPCLOSE");
+          return true;
+        }
+        else{
+          Serial.println("Packet failed to send");   
+          esp->println("AT+CIPCLOSE");
+          return false;
+          }
+        }
 
     }
 

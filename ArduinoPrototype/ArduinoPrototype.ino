@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <LowPower.h>
 #include "sensor.h"
+#include "Wifi.h"
+#include "Data.h"
 #include <DHT.h>
 
 //Declaring All STATEs
@@ -15,11 +17,19 @@
 
 //Delcare all Constant variables
   //Sensor ID Declaration
-#define SENSOR_ID "Prototype"
+#define SENSOR_ID "Prot"
   //Sensor Pins
 #define DHT11PIN 2
 #define DHT22PIN 3
+  //WIFI Globals
+#define TX 8
+#define RX 9
+#define SSID"WifiGroup"
+#define PWRD ""
+#define SERVERNAME "192.168.0.100"
+
   //Other
+#define BAUDRATE 2400
 #define NUM_READ 5              //
 #define NUM_SLEEP 8             //
 #define RATE 2                  //
@@ -29,23 +39,19 @@
 //Initialize All Global Variables
 int STATE = READ;
 int SLEEP_COUNTER = 0;
+bool CONNECTED;
+bool SENT;
 
 //Initialize All Global Class Objects
 Sensor dht11(2, DHT11);
 
-typedef struct Data{
-  char  sensor_id[4];
-  float dht11_temp;
-  float dht11_hum;
-  float dht22_temp;
-  float dht22_hum;
-  float voltage;
-} data;
+//Initialize Data Object
+data data_values;
+
+//Initialize WIFI Object
+Wifi wifi(RX, TX, BAUDRATE, SERVERNAME, SSID, PWRD);
 
 void blinkLED() {
-  dht11.read();
-  dht11.get_temp();
-  dht11.get_hum();
   digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);              // wait for a second
   digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
@@ -61,43 +67,38 @@ int readVoltage() {
   return val;
   }
 
-void connectToWifi() {
-  // this is a simulation for wifi connection assuming it will require 7s
-  digitalWrite(WIFI_PIN, HIGH);
-  delay(7000);
-  digitalWrite(WIFI_PIN, LOW);
-  }
-
 void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
-  Serial.begin(2400);
+  Serial.begin(BAUDRATE);
+  data_values.sensor_id = SENSOR_ID;
+  CONNECTED = wifi.connect();
   //dht.begin();
-
+}
 
 void loop(){
+  
   //Declare Dynamic Variables
   //float TEMP_READINGS[NUM_READ];
   //float HUM_READINGS[NUM_READ];
-  int CONNECTED;
-
+  bool SENT;
+  
   switch(STATE){
 
     case READ:
+    
       //////////
-      //READ FROM SENSOR AND WRITE TO TEMP_READING AND HUM_READINGS ARRAY
-      //////////
-      
-      //////////
-      //FIND AVERAGE READING VALUE
+      //READ FROM SENSOR 5 TIMES 
+      //FINDS AVERAGE OF TEMP AND HUM READINGS
+      //SETS dht11.temp_ and dht11.hum_ to new values
       //////////
       dht11.find_average_(NUM_READ);
-      //
-      //SEND THE FOLLOWING VALUES TO SERVER:
-      //dht11.temp_;
-      //dht11.hum_;
-      //THE VALUES SHOULD NOW BE THE AVERAGES OF 5 READINGS
-      //
+
+   
+      data_values.dht11_temp = dht11.get_temp();
+      data_values.dht11_hum = dht11.get_hum();
+
+     
       Serial.println("READ FROM SENSOR");
       //readDHT();
       readVoltage();
@@ -108,13 +109,13 @@ void loop(){
       //////////
       //CONNECT TO THE WIFI
       //////////
-      CONNECTED = 0; //This is for testing
-      connectToWifi();
       if(CONNECTED){
         STATE = WRITING_WEB;
       }
       else{
-        STATE = WRITING_LOCAL;
+        wifi.reset();
+        wifi.connect();
+        STATE = WRITING_WEB;
       }
       Serial.println("CONNECTING TO WIFI");
       break;
@@ -133,7 +134,10 @@ void loop(){
       //WRITE THE VALUE TO THE WEB
       /////////////
       Serial.println("WRITING TO WEB");
-      blinkLED();
+      SENT = wifi.send_data(data_values);
+      if(!SENT){
+        CONNECTED = 0;
+      }
       STATE = DISCONNECT_WIFI;
       break;
 
