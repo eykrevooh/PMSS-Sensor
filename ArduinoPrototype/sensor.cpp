@@ -26,8 +26,8 @@ float Sensor::find_average_(int num_readings){
   float hum[num_readings]
   for (int i=0; i<num_readings; i++){
           Sensor::read();
-          num_readings[i] = get_temp();
-          num_readings[i] = get_hum();
+          num_readings[i] = Sensor::get_temp();
+          num_readings[i] = Sensor::get_hum();
         }
   float av_temp;
   float av_hum;
