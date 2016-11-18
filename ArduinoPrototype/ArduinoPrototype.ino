@@ -77,8 +77,8 @@ void setup(){
 
 void loop(){
   //Declare Dynamic Variables
-  float TEMP_READINGS[NUM_READ];
-  float HUM_READINGS[NUM_READ];
+  //float TEMP_READINGS[NUM_READ];
+  //float HUM_READINGS[NUM_READ];
   int CONNECTED;
 
   switch(STATE){
@@ -87,10 +87,17 @@ void loop(){
       //////////
       //READ FROM SENSOR AND WRITE TO TEMP_READING AND HUM_READINGS ARRAY
       //////////
-
+      
       //////////
       //FIND AVERAGE READING VALUE
       //////////
+      dht11.find_average_(NUM_READ);
+      //
+      //SEND THE FOLLOWING VALUES TO SERVER:
+      //dht11.temp_;
+      //dht11.hum_;
+      //THE VALUES SHOULD NOW BE THE AVERAGES OF 5 READINGS
+      //
       Serial.println("READ FROM SENSOR");
       //readDHT();
       readVoltage();

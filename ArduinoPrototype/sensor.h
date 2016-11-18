@@ -7,7 +7,7 @@ class Sensor
   private:
     float temp_, hum_;
     DHT dht_ = DHT(1,11);
-    float find_average_();
+    float find_average_(int num_readings);
   public:
     Sensor(int pin, int dht_type);
     float get_temp();
