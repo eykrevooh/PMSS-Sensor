@@ -29,8 +29,8 @@ float Sensor::find_average_(int num_readings){
           total_temp += Sensor::get_temp();
           total_hum += Sensor::get_hum();
         }
-  temp_ = av_temp / num_readings;
-  hum_ = av_hum / num_readings;
+  temp_ = total_temp / num_readings;
+  hum_ = total_hum / num_readings;
   return 0;
   }
 
