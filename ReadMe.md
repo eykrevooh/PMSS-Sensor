@@ -1,4 +1,14 @@
-# Wi-fi API Documentation
+API Documentation
+=================
+
+Table of Contents
+=================
+* [Wi-Fi](#wi-fi)
+* [Power](#power)
+* [Sensor](#sensor)
+
+Wi-Fi
+===
 
 **Wifi(int rx, int tx, int baudrate, String servername, String ssid, String password)**
 
@@ -51,14 +61,14 @@ Method defined to send GET requests to the web server using the TCP connection t
 #include "Wifi.h"
 
  data package; //Struct instance of data
- 
+
  Wifi wifi; // Initializing a wifi object
- 
+
 void setup() {
    Serial.begin(9600);
-   
-   /* The following will have to change eventually */ 
-   
+
+   /* The following will have to change eventually */
+
    package.sensor_id ='a';
    package.dht11_temp = 70.99;
    package.dht11_hum = 55.44;
@@ -81,3 +91,44 @@ void loop() {
   wifi.send_data(package);
   delay(10000);
 }
+```
+Power
+===
+
+**Power(int pin)**
+
+This creates a power object that will allow us to put the arduino into the suitable power consumption state (Power down). The parameter ‘pin’ sets which analog pin must be used for the voltage divider.
+
+
+**sleep(float hours)**
+
+Built-in method used to put the arduino in the low power sleep mode to conserve battery. The parameter ‘hours’ is the duration the system must be in the low power state.
+
+
+**readVoltage()**
+
+This built-in method reports the battery level left. Returns an integer value between 0 to 1023. 0 means battery is dead and 1023 battery is full.
+
+**Example Usage**
+```cpp
+#include "Power.h"
+
+#define VOLTAGE_PIN 0
+
+Power power(VOLTAGE_PIN);
+
+void setup(){
+  Serial.begin(9600);
+}
+
+void loop(){
+      power.readVoltage();
+      power.sleep(0.005); // pass in the number of hours to sleep
+    }
+}
+```
+
+
+Sensor
+===
+<insert sensor api docs>
