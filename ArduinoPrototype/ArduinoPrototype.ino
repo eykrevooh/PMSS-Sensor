@@ -43,7 +43,7 @@ bool CONNECTED;
 bool SENT;
 
 //Initialize All Global Class Objects
-Sensor dht11(2, DHT11);
+Sensor dht11(2, DHT11);         //instance of sensor
 
 //Initialize Data Object
 data data_values;
@@ -79,8 +79,6 @@ void setup(){
 void loop(){
   
   //Declare Dynamic Variables
-  //float TEMP_READINGS[NUM_READ];
-  //float HUM_READINGS[NUM_READ];
   bool SENT;
   
   switch(STATE){
@@ -90,14 +88,14 @@ void loop(){
       //////////
       //READ FROM SENSOR 5 TIMES 
       //FINDS AVERAGE OF TEMP AND HUM READINGS
-      //SETS dht11.temp_ and dht11.hum_ to new values
+      //SETS dht11.temp_ AND dht11.hum_ TO NEW VALUES
       //////////
-      dht11.find_average_(NUM_READ);
+      
+      dht11.find_average_(NUM_READ); 
 
-   
-      data_values.dht11_temp = dht11.get_temp();
+      //UPDATE DATA VALUES AS MOST CURRENT AVERAGE READINGS
+      data_values.dht11_temp = dht11.get_temp();  
       data_values.dht11_hum = dht11.get_hum();
-
      
       Serial.println("READ FROM SENSOR");
       //readDHT();
@@ -123,6 +121,7 @@ void loop(){
     case WRITING_LOCAL:
       ////////////
       //WRITE THE VALUE LOCALLY
+      //**NOT CURRENTLY IMPLEMENTED**
       ////////////
       Serial.println("WRITING LOCALLY");
       blinkLED();
@@ -163,6 +162,7 @@ void loop(){
       if (SLEEP_COUNTER < ((NUM_SLEEP * RATE)/ 8)) {
         Serial.println("Going to sleep");
         delay(100);
+        //EXPLAIN LOWPOWER.IDLE
         LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF,
                 SPI_OFF, USART0_OFF, TWI_OFF);
         SLEEP_COUNTER = SLEEP_COUNTER + 1;
