@@ -8,14 +8,14 @@
 class Wifi {
 
 private:
-    String SSID;
+    String SID;
     String password;
     String server;
     int wifi_rxpin;
     int wifi_txpin;
     int wifi_baudrate;
     bool wifi_connected = false;
-    SoftwareSerial *esp;
+    SoftwareSerial esp = SoftwareSerial(9, 8);
 
 public:
 

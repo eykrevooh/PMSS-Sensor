@@ -1,39 +1,44 @@
 #include "Wifi.h"
 #include "Arduino.h"
-   
+
    Wifi::Wifi(int rx, int tx, int baudrate, String servername, String ssid, String password)
 {
-    set_rx_tx(rx, tx);
-    set_baudrate(baudrate);
-    set_server(servername);
-    set_credentials(ssid, password);
-    setup();
+    Serial.begin(baudrate);
+    //Serial.println("Started Init");
+    Wifi::set_rx_tx(rx, tx);
+    Wifi::set_baudrate(baudrate);
+    Wifi::set_server(servername);
+    Wifi::set_credentials(ssid, password);
+    Wifi::setup();
 }
   
     /* ----------- SETTER FUNCTIONS ------- */
 
     void Wifi::setup() {
-      esp = new SoftwareSerial(wifi_rxpin, wifi_txpin);
-      esp->begin(wifi_baudrate);
-      reset();
-      
+      //esp = new SoftwareSerial(wifi_rxpin, wifi_txpin);
+      esp.begin(wifi_baudrate);
+      Serial.println("Wifi Setup"); 
     }
     
     void Wifi::set_baudrate(int baudrate) {
+        //Serial.println("BAUD");
         wifi_baudrate = baudrate;
     }
     
     void Wifi::set_rx_tx(int rx, int tx) {
+        //Serial.println("RX_TX");
         wifi_rxpin = rx;
         wifi_txpin = tx;
     }
     
     void Wifi::set_server(String servername) {
+        //Serial.println("SERVER");
         server = servername;
     }
     
     void Wifi::set_credentials(String ssid, String password) {
-        SSID = ssid;
+        //Serial.println("ST");
+        SID = ssid;
         password = password;
     }
 
@@ -43,22 +48,27 @@
     
     void Wifi::reset() {
     /*Resets the Wifi chip*/
-    esp->println("AT+RST"); 
-    delay(1000); //Optional
-    if(esp->find("OK") ) {
+    esp.println("AT+RST"); 
+    Serial.println("Made it right here");
+    delay(5000); //Optional
+    
+    if(esp.find("OK")) {
       Serial.println("Module Reset");
     } 
+    else{
+      Serial.println("Wifi Setup"); 
+    }
     }
     
     bool Wifi::connect() {
     /*Connects the Wifi to the appropriate network
     */
 
-    String cmd = "AT+CWJAP=\"" +SSID+"\",\"" + password + "\"";
-    esp->println(cmd);
+    String cmd = "AT+CWJAP=\"" +SID+"\",\"" + password + "\"";
+    esp.println(cmd);
     delay(4000); //Optional
 
-    if (esp->find("OK")) {         // Print if the ESP8266 Wi-Fi chip has found the network, 
+    if (esp.find("OK")) {         // Print if the ESP8266 Wi-Fi chip has found the network, 
         Serial.println("Connected!");
         return true;
     }
@@ -89,9 +99,9 @@
       String voltage = String(d.voltage);
       String uri = "/ABCD/"+sensor_id+ '/' +"TMP11"+'/'+dht11_temp;
       /* Needs modification */
-      esp->println("AT+CIPSTART=\"TCP\",\"" + server + "\",5000"); //Start a TCP Connection with 'server'
+      esp.println("AT+CIPSTART=\"TCP\",\"" + server + "\",5000"); //Start a TCP Connection with 'server'
     
-      if  ( esp->find("OK")) {
+      if  ( esp.find("OK")) {
         Serial.println("TCP connection ready");
       } 
       
@@ -106,22 +116,22 @@
     
       String sendCmd = "AT+CIPSEND=";
     
-      esp->print(sendCmd);
-      esp->println(postRequest.length() );
+      esp.print(sendCmd);
+      esp.println(postRequest.length() );
       delay(500);
     
-      if(esp->find(">")) { 
+      if(esp.find(">")) { 
         Serial.println("Sending.."); 
-        esp->print(postRequest);
+        esp.print(postRequest);
     
-        if( esp->find("SEND OK")) { 
+        if( esp.find("SEND OK")) { 
           Serial.println("Packet sent");    
-          esp->println("AT+CIPCLOSE");
+          esp.println("AT+CIPCLOSE");
           return true;
         }
         else{
           Serial.println("Packet failed to send");   
-          esp->println("AT+CIPCLOSE");
+          esp.println("AT+CIPCLOSE");
           return false;
           }
         }
