@@ -24,9 +24,9 @@
   //WIFI Globals
 #define TX 8
 #define RX 9
-#define SSID"WifiGroup"
+#define SID "WifiGroup"
 #define PWRD ""
-#define SERVERNAME "192.168.0.100"
+#define SERVERNAME "192.168.0.101"
 
   //Other
 #define BAUDRATE 2400
@@ -49,7 +49,7 @@ Sensor dht11(2, DHT11);         //instance of sensor
 data data_values;
 
 //Initialize WIFI Object
-Wifi wifi(RX, TX, BAUDRATE, SERVERNAME, SSID, PWRD);
+Wifi wifi(RX, TX, BAUDRATE, SERVERNAME, SID, PWRD);
 
 void blinkLED() {
   digitalWrite(LED_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -71,10 +71,13 @@ void setup(){
   // Run one time setup.
   pinMode(LED_PIN, OUTPUT);
   Serial.begin(BAUDRATE);
+  Serial.println("I am Running");
   data_values.sensor_id = SENSOR_ID;
-  CONNECTED = wifi.connect();
-  //dht.begin();
-}
+   wifi.reset();
+   CONNECTED = wifi.connect();
+   wifi.send_data(data_values);
+   }
+
 
 void loop(){
   
@@ -164,7 +167,7 @@ void loop(){
         delay(100);
         //EXPLAIN LOWPOWER.IDLE
         LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF,
-                SPI_OFF, USART0_OFF, TWI_OFF);
+               SPI_OFF, USART0_OFF, TWI_OFF);
         SLEEP_COUNTER = SLEEP_COUNTER + 1;
       } else {
           STATE = READ;

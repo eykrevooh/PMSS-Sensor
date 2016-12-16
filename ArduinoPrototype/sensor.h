@@ -15,3 +15,4 @@ class Sensor
     int read();                               //Function: read from sensor and sets temp_ and hum_
   };
 #endif
+
