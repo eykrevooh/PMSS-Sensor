@@ -3,9 +3,18 @@ API Documentation
 
 Table of Contents
 =================
+* [Dependencies]( #build)
 * [Wi-Fi](#wi-fi)
 * [Power](#power)
 * [Sensor](#sensor)
+
+Dependencies
+=====
+The following are dependencies needed by the project:
+[Low Power](https://github.com/rocketscream/Low-Power)
+[Unified Sensor Library](https://github.com/adafruit/Adafruit_Sensor)
+[DHT Sensor Libary](https://github.com/adafruit/dht-sensor-library)
+
 
 Wi-Fi
 ===
@@ -142,6 +151,4 @@ Does 5 readings using the read function and returns the average obtained by thos
 Returns the temperature obtained from the sensor. This method requires that the read() method be called prior to the get_temp method
 
 **get_hum()**
-Similar to the get temperature method in that it will return the humitidy of the sensor after calling the read().
-
-
+Similar to the get temperature method in that it will return the humidity of the sensor after calling the read().
