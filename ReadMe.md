@@ -131,4 +131,17 @@ void loop(){
 
 Sensor
 ===
-<insert sensor api docs>
+
+**read()**
+Does only one read on the sensor and sets the hum_ and temp_ sensors to the values that it reads. In the event of an error a 1 is returned otherwise a 0 is returned.
+
+**find_average()**
+Does 5 readings using the read function and returns the average obtained by those readings.
+
+**get_temp()**
+Returns the temperature obtained from the sensor. This method requires that the read() method be called prior to the get_temp method
+
+**get_hum()**
+Similar to the get temperature method in that it will return the humitidy of the sensor after calling the read().
+
+
