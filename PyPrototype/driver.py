@@ -4,7 +4,7 @@ import sys
 import datetime
 
 def main():
-    ##
+    ###
     #### STATE DECLERATIONS ####
     INIT = 0
     CONNECT_WIFI = 1
